@@ -19,7 +19,6 @@ $json = file_get_contents('https://api.mlab.com/api/1/databases/ota/collections/
 $data = json_decode($json);
 $isData=sizeof($data);
 
-if (strpos($_msg, 'สอนโอตะ') !== false) {
   if (strpos($_msg, 'สอนโอตะ') !== false) {
     $x_tra = str_replace("สอนโอตะ","", $_msg);
     $pieces = explode("|", $x_tra);
@@ -45,8 +44,7 @@ if (strpos($_msg, 'สอนโอตะ') !== false) {
     $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
     $arrPostData['messages'][0]['type'] = "text";
     $arrPostData['messages'][0]['text'] = 'ขอบคุณที่สอนโอตะครับผม';
-  }
-}else{
+  }else{
   if($isData >0){
    foreach($data as $rec){
     $arrPostData = array();
