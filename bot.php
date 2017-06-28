@@ -1,47 +1,76 @@
 <?php
-$access_token = '4sg8B4QIZnyEQVeBzYlZU4QBvoeuS0wMm6PJBJqb0LDRqmQMqogil+fMMjn7TSZjntodbXoWIGqylElEi4AIWALHvtxqTTblL0Vofrwa9qIzTI7F5XPRum6fCocWOtzZkeJtDXOSVI7/M+qt1PmBugdB04t89/1O/w1cDnyilFU=';
 
-// Get POST body content
+$strAccessToken = "4sg8B4QIZnyEQVeBzYlZU4QBvoeuS0wMm6PJBJqb0LDRqmQMqogil+fMMjn7TSZjntodbXoWIGqylElEi4AIWALHvtxqTTblL0Vofrwa9qIzTI7F5XPRum6fCocWOtzZkeJtDXOSVI7/M+qt1PmBugdB04t89/1O/w1cDnyilFU=";
+
 $content = file_get_contents('php://input');
-// Parse JSON
-$events = json_decode($content, true);
-// Validate parsed JSON data
-if (!is_null($events['events'])) {
-	// Loop through each event
-	foreach ($events['events'] as $event) {
-		// Reply only when message sent is in 'text' format
-		if ($event['type'] == 'message' && $event['message']['type'] == 'text') {
-			// Get text sent
-			$text = $event['message']['text'];
-			// Get replyToken
-			$replyToken = $event['replyToken'];
+$arrJson = json_decode($content, true);
 
-			// Build message to reply back
-			$messages = [
-				'type' => 'text',
-				'text' => $text
-			];
+$strUrl = "https://api.line.me/v2/bot/message/reply";
 
-			// Make a POST Request to Messaging API to reply to sender
-			$url = 'https://api.line.me/v2/bot/message/reply';
-			$data = [
-				'replyToken' => $replyToken,
-				'messages' => [$messages],
-			];
-			$post = json_encode($data);
-			$headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
+$arrHeader = array();
+$arrHeader[] = "Content-Type: application/json";
+$arrHeader[] = "Authorization: Bearer {$strAccessToken}";
+$_msg = $arrJson['events'][0]['message']['text'];
 
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			$result = curl_exec($ch);
-			curl_close($ch);
 
-			echo $result . "\r\n";
-		}
-	}
+$api_key="DbGyE1ZeEsRAdY72w_H2FzSajIgzWwr";
+$url = 'https://api.mlab.com/api/1/databases/ota/collections/lineota?apiKey='.$api_key.'';
+$json = file_get_contents('https://api.mlab.com/api/1/databases/ota/collections/lineota?apiKey='.$api_key.'&q={"question":"'.$_msg.'"}');
+$data = json_decode($json);
+$isData=sizeof($data);
+
+if (strpos($_msg, 'สอนโอตะ') !== false) {
+  if (strpos($_msg, 'สอนโอตะ') !== false) {
+    $x_tra = str_replace("สอนโอตะ","", $_msg);
+    $pieces = explode("|", $x_tra);
+    $_question=str_replace("[","",$pieces[0]);
+    $_answer=str_replace("]","",$pieces[1]);
+    //Post New Data
+    $newData = json_encode(
+      array(
+        'question' => $_question,
+        'answer'=> $_answer
+      )
+    );
+    $opts = array(
+      'http' => array(
+          'method' => "POST",
+          'header' => "Content-type: application/json",
+          'content' => $newData
+       )
+    );
+    $context = stream_context_create($opts);
+    $returnValue = file_get_contents($url,false,$context);
+    $arrPostData = array();
+    $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
+    $arrPostData['messages'][0]['type'] = "text";
+    $arrPostData['messages'][0]['text'] = 'ขอบคุณที่สอนโอตะครับผม';
+  }
+}else{
+  if($isData >0){
+   foreach($data as $rec){
+    $arrPostData = array();
+    $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
+    $arrPostData['messages'][0]['type'] = "text";
+    $arrPostData['messages'][0]['text'] = $rec->answer;
+   }
+  }else{
+    $arrPostData = array();
+    $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
+    $arrPostData['messages'][0]['type'] = "text";
+    $arrPostData['messages'][0]['text'] = 'ครับผม อยากสอนโอตะ พิมพ์เลย: สอนโอตะ[คำถาม|คำตอบ]';
+  }
 }
-echo "OK";
+
+
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL,$strUrl);
+curl_setopt($channel, CURLOPT_HEADER, false);
+curl_setopt($channel, CURLOPT_POST, true);
+curl_setopt($channel, CURLOPT_HTTPHEADER, $arrHeader);
+curl_setopt($channel, CURLOPT_POSTFIELDS, json_encode($arrPostData));
+curl_setopt($channel, CURLOPT_RETURNTRANSFER,true);
+curl_setopt($channel, CURLOPT_SSL_VERIFYPEER, false);
+$result = curl_exec($channel);
+curl_close ($channel);
+?>
