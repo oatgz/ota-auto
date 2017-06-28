@@ -1,7 +1,6 @@
 <?php
 
 $strAccessToken = "4sg8B4QIZnyEQVeBzYlZU4QBvoeuS0wMm6PJBJqb0LDRqmQMqogil+fMMjn7TSZjntodbXoWIGqylElEi4AIWALHvtxqTTblL0Vofrwa9qIzTI7F5XPRum6fCocWOtzZkeJtDXOSVI7/M+qt1PmBugdB04t89/1O/w1cDnyilFU=";
-
 $content = file_get_contents('php://input');
 $arrJson = json_decode($content, true);
 
@@ -11,6 +10,7 @@ $arrHeader = array();
 $arrHeader[] = "Content-Type: application/json";
 $arrHeader[] = "Authorization: Bearer {$strAccessToken}";
 $_msg = $arrJson['events'][0]['message']['text'];
+
 
 
 $api_key="DbGyE1ZeEsRAdY72w_H2FzSajIgzWwr";
