@@ -1,6 +1,7 @@
 <?php
 
 $strAccessToken = "4sg8B4QIZnyEQVeBzYlZU4QBvoeuS0wMm6PJBJqb0LDRqmQMqogil+fMMjn7TSZjntodbXoWIGqylElEi4AIWALHvtxqTTblL0Vofrwa9qIzTI7F5XPRum6fCocWOtzZkeJtDXOSVI7/M+qt1PmBugdB04t89/1O/w1cDnyilFU=";
+
 $content = file_get_contents('php://input');
 $arrJson = json_decode($content, true);
 
@@ -12,13 +13,14 @@ $arrHeader[] = "Authorization: Bearer {$strAccessToken}";
 $_msg = $arrJson['events'][0]['message']['text'];
 
 
+$api_key="rxKOV3hat_e_6-di58LIAy8XB238Xihp";
 
-$api_key="DbGyE1ZeEsRAdY72w_H2FzSajIgzWwr";
 $url = 'https://api.mlab.com/api/1/databases/ota/collections/lineota?apiKey='.$api_key.'';
 $json = file_get_contents('https://api.mlab.com/api/1/databases/ota/collections/lineota?apiKey='.$api_key.'&q={"question":"'.$_msg.'"}');
 $data = json_decode($json);
 $isData=sizeof($data);
 
+if (strpos($_msg, 'สอนโอตะ') !== false) {
   if (strpos($_msg, 'สอนโอตะ') !== false) {
     $x_tra = str_replace("สอนโอตะ","", $_msg);
     $pieces = explode("|", $x_tra);
@@ -44,7 +46,9 @@ $isData=sizeof($data);
     $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
     $arrPostData['messages'][0]['type'] = "text";
     $arrPostData['messages'][0]['text'] = 'ขอบคุณที่สอนโอตะครับผม';
-  }else{
+
+  }
+}else{
   if($isData >0){
    foreach($data as $rec){
     $arrPostData = array();
@@ -57,6 +61,7 @@ $isData=sizeof($data);
     $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
     $arrPostData['messages'][0]['type'] = "text";
     $arrPostData['messages'][0]['text'] = 'ครับผม อยากสอนโอตะ พิมพ์เลย: สอนโอตะ[คำถาม|คำตอบ]';
+
   }
 }
 
