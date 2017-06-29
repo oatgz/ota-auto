@@ -1,11 +1,15 @@
 <?php
-echo "Hello Ota-auto";
-$api_key="rxKOV3hat_e_6-di58LIAy8XB238Xihp";
-$connect = 'https://api.mlab.com/api/1/databases/ota/collections/lineota?apiKey='.$api_key.'';
-$connect=new Mongo();
-$db = $connect->selectDB( "ota" );
-$collection = $db->selectCollection( "otaline" );
+try
+{
+    $connection = new Mongo('mongodb://oatgz:Oatgz123456@ds135812.mlab.com:35812/ota');
+    $database   = $connection->selectDB('ota');
+    $collection = $database->selectCollection('otaline');
+}
+catch(MongoConnectionException $e)
+{
+    die("Failed to connect to database ".$e->getMessage());
+}
+
 $cursor = $collection->find();
-   foreach ($cursor as $document) {
-      echo $document["question"] . "\n";
-   }
+
+?>
