@@ -20,9 +20,9 @@ $json = file_get_contents('https://api.mlab.com/api/1/databases/ota/collections/
 $data = json_decode($json);
 $isData=sizeof($data);
 
-if (strpos($_msg, 'สอนโอตะ') !== false) {
-  if (strpos($_msg, 'สอนโอตะ') !== false) {
-    $x_tra = str_replace("สอนโอตะ","", $_msg);
+if (strpos($_msg, 'โอตะ') !== false) {
+  if (strpos($_msg, 'โอตะ') !== false) {
+    $x_tra = str_replace("โอตะ","", $_msg);
     $pieces = explode("|", $x_tra);
     $_question=str_replace("[","",$pieces[0]);
     $_answer=str_replace("]","",$pieces[1]);
@@ -45,7 +45,7 @@ if (strpos($_msg, 'สอนโอตะ') !== false) {
     $arrPostData = array();
     $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
     $arrPostData['messages'][0]['type'] = "text";
-    $arrPostData['messages'][0]['text'] = 'ขอบคุณที่สอนโอตะครับผม';
+    $arrPostData['messages'][0]['text'] = 'ขอบคุณครับ';
 
   }
 }else{
@@ -60,7 +60,7 @@ if (strpos($_msg, 'สอนโอตะ') !== false) {
     $arrPostData = array();
     $arrPostData['replyToken'] = $arrJson['events'][0]['replyToken'];
     $arrPostData['messages'][0]['type'] = "text";
-    $arrPostData['messages'][0]['text'] = 'สอนโอตะ[คำถาม|คำตอบ]';
+    $arrPostData['messages'][0]['text'] = 'โอตะ[คำถาม|คำตอบ]';
   }
 }
 
